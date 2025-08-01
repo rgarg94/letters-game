@@ -1,6 +1,6 @@
 {
   "name": "letters-game",
-  "private": true,
+  "private": false,
   "version": "0.0.0",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -19,13 +19,13 @@
   },
   "dependencies": {
     "lucide-react": "^0.534.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
+    "@types/react": "^16.0.0",
+    "@types/react-dom": "^16.0.0",
     "@vitejs/plugin-react-swc": "^3.10.2",
     "eslint": "^9.30.1",
     "eslint-plugin-react-hooks": "^5.2.0",
