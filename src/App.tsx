@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import Game2, { type KeyEvent } from "./Learning";
+import Application from "./Application";
+import "./style/main.css";
 
 function App() {
   // return <Game1 />;
@@ -8,17 +10,18 @@ function App() {
     setTimeout(() => {
       console.log("first");
 
-      setCustomKey({ key: "ArrowDown", keyCode: 1, virtualKey: "adsnkajdn" });
+      setCustomKey({ key: "ArrowDown", keyCode: 37, virtualKey: "adsnkajdn" });
     }, 1000);
 
     setTimeout(() => {
       console.log("second");
 
-      setCustomKey({ key: "Enter", keyCode: 1, virtualKey: "adsnkajdn" });
+      setCustomKey({ key: "Enter", keyCode: 39, virtualKey: "adsnkajdn" });
     }, 3000);
   }, []);
 
-  return <Game2 customKey={customKey} />;
+  // return <Game2 customKey={customKey} />;
+  return <Application eventKeyDown={customKey} />;
 }
 
 export default App;
