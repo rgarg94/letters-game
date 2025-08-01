@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Game2, { type KeyEvent } from "./Learning";
 import Application from "./Application";
-import "./style/main.css";
 
 function App() {
   // return <Game1 />;
@@ -20,8 +19,8 @@ function App() {
     }, 3000);
   }, []);
 
-  // return <Game2 customKey={customKey} />;
-  return <Application eventKeyDown={customKey} />;
+  return <Game2 customKey={customKey} />;
+  // return <Application eventKeyDown={customKey} />;
 }
 
 export default App;

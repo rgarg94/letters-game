@@ -1,9 +1,39 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { X, Volume2, RefreshCw } from "lucide-react";
+import a_apple from "./audio/a_apple.mp3";
+import a_airplane from "./audio/a_airplane.mp3";
+import a_ant from "./audio/a_ant.mp3";
+import b_ball from "./audio/b_ball.mp3";
+import b_butterfly from "./audio/b_butterfly.mp3";
+import c_cat from "./audio/c_cat.mp3";
+import d_dog from "./audio/d_dog.mp3";
+import e_elephant from "./audio/e_elephant.mp3";
+import f_fish from "./audio/f_fish.mp3";
+import g_giraffe from "./audio/g_giraffe.mp3";
+import h_house from "./audio/h_house.mp3";
+import i_ice_cream from "./audio/i_ice_cream.mp3";
+import j_jellyfish from "./audio/j_jellyfish.mp3";
+import k_kite from "./audio/k_kite.mp3";
+import l_lion from "./audio/l_lion.mp3";
+import m_moon from "./audio/m_moon.mp3";
+import n_nest from "./audio/n_nest.mp3";
+import o_orange from "./audio/o_orange.mp3";
+import p_penguin from "./audio/p_penguin.mp3";
+import q_queen from "./audio/q_queen.mp3";
+import r_rainbow from "./audio/r_rainbow.mp3";
+import s_sun from "./audio/s_sun.mp3";
+import t_tree from "./audio/t_tree.mp3";
+import u_umbrella from "./audio/u_umbrella.mp3";
+import v_violin from "./audio/v_violin.mp3";
+import w_whale from "./audio/w_whale.mp3";
+import x_xylophone from "./audio/x_xylophone.mp3";
+import y_yellow from "./audio/y_yellow.mp3";
+import z_zebra from "./audio/z_zebra.mp3";
 
 interface WordData {
   word: string;
   emoji: string;
+  audioFile: string;
 }
 
 export interface KeyEvent {
@@ -11,6 +41,45 @@ export interface KeyEvent {
   virtualKey: string;
   key: string;
 }
+
+// Multiple word options for each letter
+const alphabetWords: Record<string, WordData[]> = {
+  A: [
+    { word: "Apple", emoji: "🍎", audioFile: a_apple },
+    { word: "Airplane", emoji: "✈️", audioFile: a_airplane },
+    { word: "Ant", emoji: "🐜", audioFile: a_ant }
+  ],
+  B: [
+    { word: "Ball", emoji: "⚽", audioFile: b_ball },
+    { word: "Butterfly", emoji: "🦋", audioFile: b_butterfly }
+  ],
+  C: [{ word: "Cat", emoji: "🐱", audioFile: c_cat }],
+  D: [{ word: "Dog", emoji: "🐶", audioFile: d_dog }],
+  E: [{ word: "Elephant", emoji: "🐘", audioFile: e_elephant }],
+  F: [{ word: "Fish", emoji: "🐠", audioFile: f_fish }],
+  G: [{ word: "Giraffe", emoji: "🦒", audioFile: g_giraffe }],
+  H: [{ word: "House", emoji: "🏠", audioFile: h_house }],
+  I: [{ word: "Ice Cream", emoji: "🍦", audioFile: i_ice_cream }],
+  J: [{ word: "Jellyfish", emoji: "🪼", audioFile: j_jellyfish }],
+  K: [{ word: "Kite", emoji: "🪁", audioFile: k_kite }],
+  L: [{ word: "Lion", emoji: "🦁", audioFile: l_lion }],
+  M: [{ word: "Moon", emoji: "🌙", audioFile: m_moon }],
+  N: [{ word: "Nest", emoji: "🪺", audioFile: n_nest }],
+  O: [{ word: "Orange", emoji: "🍊", audioFile: o_orange }],
+  P: [{ word: "Penguin", emoji: "🐧", audioFile: p_penguin }],
+  Q: [{ word: "Queen", emoji: "👸", audioFile: q_queen }],
+  R: [{ word: "Rainbow", emoji: "🌈", audioFile: r_rainbow }],
+  S: [{ word: "Sun", emoji: "☀️", audioFile: s_sun }],
+  T: [{ word: "Tree", emoji: "🌳", audioFile: t_tree }],
+  U: [{ word: "Umbrella", emoji: "☂️", audioFile: u_umbrella }],
+  V: [{ word: "Violin", emoji: "🎻", audioFile: v_violin }],
+  W: [{ word: "Whale", emoji: "🐋", audioFile: w_whale }],
+  X: [{ word: "Xylophone", emoji: "🎹", audioFile: x_xylophone }],
+  Y: [{ word: "Yellow", emoji: "💛", audioFile: y_yellow }],
+  Z: [{ word: "Zebra", emoji: "🦓", audioFile: z_zebra }]
+};
+
+const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
@@ -22,194 +91,6 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
   // TV Navigation states
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [popupFocusedButton, setPopupFocusedButton] = useState(0); // 0: play, 1: new word, 2: close
-
-  // Multiple word options for each letter
-  const alphabetWords: Record<string, WordData[]> = {
-    A: [
-      { word: "Apple", emoji: "🍎" },
-      { word: "Airplane", emoji: "✈️" },
-      { word: "Ant", emoji: "🐜" },
-      { word: "Alligator", emoji: "🐊" },
-      { word: "Arrow", emoji: "➡️" }
-    ],
-    B: [
-      { word: "Ball", emoji: "⚽" },
-      { word: "Butterfly", emoji: "🦋" },
-      { word: "Banana", emoji: "🍌" },
-      { word: "Bear", emoji: "🐻" },
-      { word: "Boat", emoji: "🚤" }
-    ],
-    C: [
-      { word: "Cat", emoji: "🐱" },
-      { word: "Car", emoji: "🚗" },
-      { word: "Cake", emoji: "🍰" },
-      { word: "Crown", emoji: "👑" },
-      { word: "Cloud", emoji: "☁️" }
-    ],
-    D: [
-      { word: "Dog", emoji: "🐶" },
-      { word: "Duck", emoji: "🦆" },
-      { word: "Dolphin", emoji: "🐬" },
-      { word: "Dinosaur", emoji: "🦕" },
-      { word: "Dragon", emoji: "🐉" }
-    ],
-    E: [
-      { word: "Elephant", emoji: "🐘" },
-      { word: "Eagle", emoji: "🦅" },
-      { word: "Earth", emoji: "🌍" },
-      { word: "Egg", emoji: "🥚" },
-      { word: "Eye", emoji: "👁️" }
-    ],
-    F: [
-      { word: "Fish", emoji: "🐠" },
-      { word: "Flower", emoji: "🌸" },
-      { word: "Fire", emoji: "🔥" },
-      { word: "Frog", emoji: "🐸" },
-      { word: "Fox", emoji: "🦊" }
-    ],
-    G: [
-      { word: "Giraffe", emoji: "🦒" },
-      { word: "Guitar", emoji: "🎸" },
-      { word: "Grapes", emoji: "🍇" },
-      { word: "Ghost", emoji: "👻" },
-      { word: "Gift", emoji: "🎁" }
-    ],
-    H: [
-      { word: "House", emoji: "🏠" },
-      { word: "Horse", emoji: "🐴" },
-      { word: "Heart", emoji: "❤️" },
-      { word: "Hat", emoji: "🎩" },
-      { word: "Helicopter", emoji: "🚁" }
-    ],
-    I: [
-      { word: "Ice Cream", emoji: "🍦" },
-      { word: "Island", emoji: "🏝️" },
-      { word: "Igloo", emoji: "🏔️" },
-      { word: "Insect", emoji: "🐛" },
-      { word: "Iron", emoji: "🔧" }
-    ],
-    J: [
-      { word: "Jellyfish", emoji: "🪼" },
-      { word: "Jacket", emoji: "🧥" },
-      { word: "Juice", emoji: "🧃" },
-      { word: "Jewel", emoji: "💎" },
-      { word: "Jungle", emoji: "🌴" }
-    ],
-    K: [
-      { word: "Kite", emoji: "🪁" },
-      { word: "King", emoji: "👑" },
-      { word: "Kangaroo", emoji: "🦘" },
-      { word: "Key", emoji: "🔑" },
-      { word: "Kitchen", emoji: "🍳" }
-    ],
-    L: [
-      { word: "Lion", emoji: "🦁" },
-      { word: "Leaf", emoji: "🍃" },
-      { word: "Lightning", emoji: "⚡" },
-      { word: "Ladybug", emoji: "🐞" },
-      { word: "Lemon", emoji: "🍋" }
-    ],
-    M: [
-      { word: "Moon", emoji: "🌙" },
-      { word: "Monkey", emoji: "🐵" },
-      { word: "Mouse", emoji: "🐭" },
-      { word: "Mountain", emoji: "⛰️" },
-      { word: "Music", emoji: "🎵" }
-    ],
-    N: [
-      { word: "Nest", emoji: "🪺" },
-      { word: "Night", emoji: "🌃" },
-      { word: "Nose", emoji: "👃" },
-      { word: "Narwhal", emoji: "🐋" },
-      { word: "Ninja", emoji: "🥷" }
-    ],
-    O: [
-      { word: "Orange", emoji: "🍊" },
-      { word: "Ocean", emoji: "🌊" },
-      { word: "Owl", emoji: "🦉" },
-      { word: "Octopus", emoji: "🐙" },
-      { word: "Onion", emoji: "🧅" }
-    ],
-    P: [
-      { word: "Penguin", emoji: "🐧" },
-      { word: "Pizza", emoji: "🍕" },
-      { word: "Parrot", emoji: "🦜" },
-      { word: "Planet", emoji: "🪐" },
-      { word: "Panda", emoji: "🐼" }
-    ],
-    Q: [
-      { word: "Queen", emoji: "👸" },
-      { word: "Question", emoji: "❓" },
-      { word: "Quail", emoji: "🐦" },
-      { word: "Quilt", emoji: "🛏️" },
-      { word: "Quiet", emoji: "🤫" }
-    ],
-    R: [
-      { word: "Rainbow", emoji: "🌈" },
-      { word: "Robot", emoji: "🤖" },
-      { word: "Rocket", emoji: "🚀" },
-      { word: "Rose", emoji: "🌹" },
-      { word: "Rabbit", emoji: "🐰" }
-    ],
-    S: [
-      { word: "Sun", emoji: "☀️" },
-      { word: "Star", emoji: "⭐" },
-      { word: "Snake", emoji: "🐍" },
-      { word: "Ship", emoji: "🚢" },
-      { word: "Snowman", emoji: "⛄" }
-    ],
-    T: [
-      { word: "Tree", emoji: "🌳" },
-      { word: "Tiger", emoji: "🐅" },
-      { word: "Train", emoji: "🚂" },
-      { word: "Turtle", emoji: "🐢" },
-      { word: "Treasure", emoji: "💰" }
-    ],
-    U: [
-      { word: "Umbrella", emoji: "☂️" },
-      { word: "Unicorn", emoji: "🦄" },
-      { word: "UFO", emoji: "🛸" },
-      { word: "Universe", emoji: "🌌" },
-      { word: "Ukulele", emoji: "🎸" }
-    ],
-    V: [
-      { word: "Violin", emoji: "🎻" },
-      { word: "Volcano", emoji: "🌋" },
-      { word: "Van", emoji: "🚐" },
-      { word: "Vampire", emoji: "🧛" },
-      { word: "Vegetable", emoji: "🥕" }
-    ],
-    W: [
-      { word: "Whale", emoji: "🐋" },
-      { word: "Watermelon", emoji: "🍉" },
-      { word: "Wolf", emoji: "🐺" },
-      { word: "Wind", emoji: "💨" },
-      { word: "Wizard", emoji: "🧙" }
-    ],
-    X: [
-      { word: "Xylophone", emoji: "🎹" },
-      { word: "X-ray", emoji: "🩻" },
-      { word: "Xbox", emoji: "🎮" },
-      { word: "Xerus", emoji: "🐿️" },
-      { word: "Xylem", emoji: "🌿" }
-    ],
-    Y: [
-      { word: "Yellow", emoji: "💛" },
-      { word: "Yacht", emoji: "🛥️" },
-      { word: "Yak", emoji: "🦬" },
-      { word: "Yarn", emoji: "🧶" },
-      { word: "Yo-yo", emoji: "🪀" }
-    ],
-    Z: [
-      { word: "Zebra", emoji: "🦓" },
-      { word: "Zoo", emoji: "🦁" },
-      { word: "Zombie", emoji: "🧟" },
-      { word: "Zipper", emoji: "🤐" },
-      { word: "Zeppelin", emoji: "🎈" }
-    ]
-  };
-
-  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
   // Dynamic grid calculation based on screen size
   const getGridCols = () => {
@@ -238,23 +119,26 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
     return words[Math.floor(Math.random() * words.length)];
   };
 
-  const playAudio = (letter: string, word: string) => {
+  const playAudio = (letter: string, word: string, audioFile: string) => {
     setIsPlaying(true);
+    const audio = new Audio(audioFile);
+    audio.play();
+    setIsPlaying(false);
 
-    if ("speechSynthesis" in window) {
-      const utterance = new SpeechSynthesisUtterance(`${letter} for ${word}`);
-      utterance.rate = 0.7;
-      utterance.pitch = 1.1;
-      utterance.volume = 0.8;
+    // if ("speechSynthesis" in window) {
+    //   const utterance = new SpeechSynthesisUtterance(`${letter} for ${word}`);
+    //   utterance.rate = 0.7;
+    //   utterance.pitch = 1.1;
+    //   utterance.volume = 0.8;
 
-      utterance.onend = () => setIsPlaying(false);
-      utterance.onerror = () => setIsPlaying(false);
+    //   utterance.onend = () => setIsPlaying(false);
+    //   utterance.onerror = () => setIsPlaying(false);
 
-      speechSynthesis.cancel();
-      speechSynthesis.speak(utterance);
-    } else {
-      setIsPlaying(false);
-    }
+    //   speechSynthesis.cancel();
+    //   speechSynthesis.speak(utterance);
+    // } else {
+    //   setIsPlaying(false);
+    // }
   };
 
   const handleLetterClick = (letter: string) => {
@@ -271,7 +155,7 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
     }, 600);
 
     setTimeout(() => {
-      playAudio(letter, randomWord.word);
+      playAudio(letter, randomWord.word, randomWord.audioFile);
     }, 800);
   };
 
@@ -297,7 +181,7 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
       setSelectedWord(newWord);
       setShowWord(true);
       setIsFlipping(false);
-      playAudio(selectedLetter, newWord.word);
+      playAudio(selectedLetter, newWord.word, newWord.audioFile);
     }, 300);
   };
 
@@ -349,7 +233,11 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
             if (popupFocusedButton === 0) {
               // Play button
               if (selectedWord) {
-                playAudio(selectedLetter, selectedWord.word);
+                playAudio(
+                  selectedLetter,
+                  selectedWord.word,
+                  selectedWord.audioFile
+                );
               }
             } else if (popupFocusedButton === 1) {
               // New word button
@@ -976,7 +864,11 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
                   <div className="play-button-container">
                     <button
                       onClick={() =>
-                        playAudio(selectedLetter, selectedWord.word)
+                        playAudio(
+                          selectedLetter,
+                          selectedWord.word,
+                          selectedWord.audioFile
+                        )
                       }
                       disabled={isPlaying}
                       className={`play-button ${
