@@ -12,8 +12,6 @@
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
-    "declaration": true,
-    "declarationDir": "dist",
     "noEmit": true,
     "jsx": "react-jsx",
 
