@@ -847,9 +847,6 @@ const Application = ({ eventKeyDown = null }) => {
   font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
   font-size: 18px; }
 
-body {
-  margin: 80px 0; }
-
 .heading:after {
   content: "";
   display: block;
