@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { X, Volume2, RefreshCw } from "lucide-react";
 import a_apple from "./audio/a_apple.mp3";
 import a_airplane from "./audio/a_airplane.mp3";
@@ -119,7 +119,7 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
     return words[Math.floor(Math.random() * words.length)];
   };
 
-  const playAudio = (letter: string, word: string, audioFile: string) => {
+  const playAudio = (audioFile: string) => {
     setIsPlaying(true);
     const audio = new Audio(audioFile);
     audio.play();
@@ -155,7 +155,7 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
     }, 600);
 
     setTimeout(() => {
-      playAudio(letter, randomWord.word, randomWord.audioFile);
+      playAudio(randomWord.audioFile);
     }, 800);
   };
 
@@ -181,7 +181,7 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
       setSelectedWord(newWord);
       setShowWord(true);
       setIsFlipping(false);
-      playAudio(selectedLetter, newWord.word, newWord.audioFile);
+      playAudio(newWord.audioFile);
     }, 300);
   };
 
@@ -191,7 +191,7 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
     setIsPlaying(false);
     setIsFlipping(false);
     setShowWord(false);
-    speechSynthesis.cancel();
+    // speechSynthesis.cancel();
   };
 
   // TV Remote Navigation Handler
@@ -210,10 +210,13 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
       //     "Escape"
       //   ].includes(key)
       // ) {
-      //   // return;
       // }
 
+      console.log("handleKeyPress", { selectedLetter });
+
       if (selectedLetter) {
+        console.log({ selectedLetter, key });
+
         // Popup is open - handle popup navigation
         switch (key) {
           case "Escape":
@@ -233,11 +236,7 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
             if (popupFocusedButton === 0) {
               // Play button
               if (selectedWord) {
-                playAudio(
-                  selectedLetter,
-                  selectedWord.word,
-                  selectedWord.audioFile
-                );
+                playAudio(selectedWord.audioFile);
               }
             } else if (popupFocusedButton === 1) {
               // New word button
@@ -344,7 +343,11 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
         .app-container {
           min-height: 100vh;
           background: linear-gradient(135deg, #fef3c7 0%, #fce7f3 50%, #e0e7ff 100%);
-          padding: 16px;
+          padding: 60px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
         }
 
         .content-wrapper {
@@ -480,21 +483,16 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
           box-shadow: 0 25px 50px rgba(0,0,0,0.25);
           position: relative;
           overflow: hidden;
-          width: 80vw;
-          height: 80vh;
+          width: 90vw;
+          height: 90vh;
           max-width: 600px;
           max-height: 600px;
         }
 
         .popup-instructions {
-          position: absolute;
-          top: 25px;
-          left: 50%;
-          transform: translateX(-50%);
           font-size: 14px;
           color: #7c3aed;
           font-weight: 500;
-          z-index: 10;
         }
 
         .popup-nav-buttons {
@@ -562,16 +560,11 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
           text-align: center;
         }
 
-        .letter-display {
-          margin-bottom: 32px;
-        }
-
         .large-letter {
           font-size: 6rem;
           font-weight: bold;
           color: #7c3aed;
           text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-          margin-bottom: 16px;
           transition: all 0.6s ease;
         }
 
@@ -582,7 +575,7 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
 
         @media (min-width: 768px) {
           .large-letter {
-            font-size: 8rem;
+            font-size: 7rem;
           }
         }
 
@@ -599,7 +592,7 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
         }
 
         .word-display {
-          margin-bottom: 32px;
+          margin-bottom: 16px;
           transition: all 0.5s ease;
         }
 
@@ -614,8 +607,7 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
         }
 
         .word-emoji {
-          font-size: 4rem;
-          margin-bottom: 16px;
+          font-size: 6rem;
           animation: bounce 2s infinite;
         }
 
@@ -776,7 +768,6 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
               <button
                 key={letter}
                 data-letter-index={index}
-                onClick={() => handleLetterClick(letter)}
                 className={`letter-button ${
                   focusedIndex === index && !selectedLetter ? "focused" : ""
                 }`}
@@ -796,11 +787,6 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
           {selectedLetter && selectedWord && (
             <div className="popup-overlay">
               <div className="popup-content">
-                {/* TV Navigation Instructions in Popup */}
-                <div className="popup-instructions">
-                  ← → to navigate buttons • OK to select • Back to close
-                </div>
-
                 {/* Navigation Buttons Row */}
                 <div className="popup-nav-buttons">
                   {/* New Word Button */}
@@ -823,7 +809,6 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
 
                   {/* Close Button */}
                   <button
-                    onClick={closePopup}
                     className={`nav-button close-button ${
                       popupFocusedButton === 2 ? "focused" : ""
                     }`}
@@ -837,6 +822,10 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
 
                 {/* Content */}
                 <div className="popup-main-content">
+                  {/* TV Navigation Instructions in Popup */}
+                  <div className="popup-instructions">
+                    ← → to navigate buttons • OK to select • Back to close
+                  </div>
                   {/* Animated Letter Display */}
                   <div className="letter-display">
                     <div
@@ -863,13 +852,7 @@ const AlphabetLearningApp = ({ customKey }: { customKey?: KeyEvent }) => {
                   {/* Play Button */}
                   <div className="play-button-container">
                     <button
-                      onClick={() =>
-                        playAudio(
-                          selectedLetter,
-                          selectedWord.word,
-                          selectedWord.audioFile
-                        )
-                      }
+                      onClick={() => playAudio(selectedWord.audioFile)}
                       disabled={isPlaying}
                       className={`play-button ${
                         popupFocusedButton === 0 ? "focused" : ""
